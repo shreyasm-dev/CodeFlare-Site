@@ -1,199 +1,104 @@
-var html = ["<!DOCTYPE html>", "<html>", "  <head>", "    <title>Monaco Editor</title>", "  </head>", "  <body>", "    ", "  </body>", "</html>"]
-
-// Set up Monaco Editor
-require.config({
-  paths: {
-    'vs': 'https://unpkg.com/monaco-editor@0.8.3/min/vs'
-  }
-});
-window.MonacoEnvironment = {
-  getWorkerUrl: () => proxy
-};
-
-let proxy = URL.createObjectURL(new Blob([`
-	self.MonacoEnvironment = {
-		baseUrl: 'https://unpkg.com/monaco-editor@0.8.3/min/'
-	};
-	importScripts('https://unpkg.com/monaco-editor@0.8.3/min/vs/base/worker/workerMain.js');
-`], {
-  type: 'text/html'
-}));
-
-require(["vs/editor/editor.main"], function() {
-  let editor = monaco.editor.create(document.getElementById('container'), {
-    value: html.join('\n'),
-    language: 'html',
-    theme: 'vs-dark',
-    tabSize: 2
-  });
-
-  editor.onKeyDown(function(e) {
-    if (e.keyCode == 84 && editor.getModel()._languageIdentifier.language == "html") {
-      var position = editor.getPosition();
-      var text = editor.getValue(position);
-      var splitedText = text.split("\n");
-      var line = splitedText[position.lineNumber - 1];
-      var regex = /<(\w+)[^\/>]*$/;
-      if (line.match(regex)) {
-        var content = "</" + line.match(regex)[1] + ">";
-        editor.trigger('bla', 'type', {
-          text: content
-        });
-        editor.setPosition(position);
-      }
-    }
-  }, 'editorTextFocus && !suggestWidgetVisible && !renameInputVisible && !inSnippetMode && !quickFixWidgetVisible')
-
-  document.getElementById('runButton').addEventListener('click', function() {
-    document.querySelector('iframe').srcdoc = editor.getValue()
-  })
-
-  window.onresize = function() {
-    editor.layout()
-  }
-});
-
-console.log = function(log) {
-  var consoleDiv = document.createElement('div')
-  consoleDiv.innerHTMl = log
+html {
+	--theme-color-: black;
+	--theme-color-secondary-: white;
 }
 
-function toggleSandbox() {
-  if (document.querySelector('iframe').hasAttribute('sandbox')) {
-    document.querySelector('iframe').removeAttribute('sandbox')
-  } else {
-    document.querySelector('iframe').setAttribute('sandbox', '')
-  }
+html, body {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	user-select: none;
 }
 
-function getSandbox() {
-  if (document.querySelector('iframe').hasAttribute('sandbox')) {
-    return true
-  } else {
-    return false
-  }
+#toolbar {
+	background-color: var(--theme-color-);
+	padding: 10px;
+	overflow-x: scroll;
+	white-space: nowrap;
 }
 
-//toggleSandbox()
+#toolbar > div {
+	color: var(--theme-color-secondary-);
+	padding: 10px;
+	width: fit-content;
+	display: inline-block;
+	border: solid 2px var(--theme-color-secondary-);
+	border-top: none;
+	border-bottom: none;
+	border-left: none;
+	cursor: pointer;
+}
 
-document.getElementById('customizeButton').addEventListener('click', function() {
-  document.getElementById('customizeButtonOptions').classList.toggle('show')
-})
+#container {
+	width: 50vw;
+	height: 100vh;
+	position: absolute;
+	left: 0;
+	
+}
 
-document.getElementById('customizeButtonOptions').addEventListener('click', function() {
-  document.getElementById('customizeButtonOptions').classList.toggle('show')
-})
+#result {
+	width: 50vw;
+	height: 100vh;
+	position: absolute;
+	right: 0px;
+	z-index: 999;
+	border: none;
+}
 
-document.getElementById('debugButton').addEventListener('click', function() {
-  document.getElementById('customizeDebugOptions').classList.toggle('show')
-})
+#console {
+	width: 50vw;
+	height: 40px;
+	position: absolute;
+	right: 0px;
+	z-index: 999;
+	border: none;
+	background-color: rgb(10, 50, 100);
+	bottom: 0px;
+}
 
-document.getElementById('customizeDebugOptions').addEventListener('click', function() {
-  document.getElementById('customizeDebugOptions').classList.toggle('show')
-})
+.hide {
+	display: none;
+}
 
-const pickr = Pickr.create({
-  el: '#color-picker-theme',
-  theme: 'classic',
-  default: '#000000',
-  container: document.getElementById("themePicker"),
+.show {
+	display: block;
+}
 
-  swatches: [
-    'rgba(244, 67, 54, 1)',
-    'rgba(233, 30, 99, 0.95)',
-    'rgba(156, 39, 176, 0.9)',
-    'rgba(103, 58, 183, 0.85)',
-    'rgba(63, 81, 181, 0.8)',
-    'rgba(33, 150, 243, 0.75)',
-    'rgba(3, 169, 244, 0.7)',
-    'rgba(0, 188, 212, 0.7)',
-    'rgba(0, 150, 136, 0.75)',
-    'rgba(76, 175, 80, 0.8)',
-    'rgba(139, 195, 74, 0.85)',
-    'rgba(205, 220, 57, 0.9)',
-    'rgba(255, 235, 59, 0.95)',
-    'rgba(255, 193, 7, 1)'
-  ],
+#customizeButtonOptions {
+	position: absolute;
+	top: 50px;
+	z-index: 99999;
+	padding: 20px;
+	background-color: var(--theme-color-);
+	cursor: auto;
+}
 
-  components: {
+#customizeDebugOptions {
+	position: absolute;
+	top: 50px;
+	z-index: 99999;
+	padding: 20px;
+	background-color: var(--theme-color-);
+	cursor: auto;
+}
 
-    // Main components
-    preview: true,
-    opacity: true,
-    hue: true,
+#customizeDebugOptions > #sandbox > button {
+	color: var(--theme-color-secondary-);
+	background-color: var(--theme-color-);
+	border: solid 1px var(--theme-color-secondary-);
+	padding: 5px;
+	border-radius: 10px;
+	outline: none !important;
+}
 
-    // Input / output Options
-    interaction: {
-      hex: true,
-      rgba: true,
-      hsla: true,
-      hsva: true,
-      cmyk: true,
-      input: true,
-      clear: true,
-      save: true
-    }
-  }
-});
-
-const pickrSecondary = Pickr.create({
-  el: '#color-picker-theme-secondary',
-  theme: 'classic',
-  default: '#ffffff',
-  container: document.getElementById("themePicker"),
-
-  swatches: [
-    'rgba(244, 67, 54, 1)',
-    'rgba(233, 30, 99, 0.95)',
-    'rgba(156, 39, 176, 0.9)',
-    'rgba(103, 58, 183, 0.85)',
-    'rgba(63, 81, 181, 0.8)',
-    'rgba(33, 150, 243, 0.75)',
-    'rgba(3, 169, 244, 0.7)',
-    'rgba(0, 188, 212, 0.7)',
-    'rgba(0, 150, 136, 0.75)',
-    'rgba(76, 175, 80, 0.8)',
-    'rgba(139, 195, 74, 0.85)',
-    'rgba(205, 220, 57, 0.9)',
-    'rgba(255, 235, 59, 0.95)',
-    'rgba(255, 193, 7, 1)'
-  ],
-
-  components: {
-
-    // Main components
-    preview: true,
-    opacity: true,
-    hue: true,
-
-    // Input / output Options
-    interaction: {
-      hex: true,
-      rgba: true,
-      hsla: true,
-      hsva: true,
-      cmyk: true,
-      input: true,
-      clear: true,
-      save: true
-    }
-  }
-});
-
-pickr.on('save', function(color) {
-  if (color != null) {
-    color = color.toRGBA()
-    document.querySelector('html').style.setProperty('--theme-color-', 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + color[3] + ')')
-  } else {
-    document.querySelector('html').style.setProperty('--theme-color-', 'black')
-  }
-})
-
-pickrSecondary.on('save', function(color) {
-  if (color != null) {
-    color = color.toRGBA()
-    document.querySelector('html').style.setProperty('--theme-color-secondary-', 'rgba(' + color[0] + ', ' + color[1] + ', ' + color[2] + ', ' + color[3] + ')')
-  } else {
-    document.querySelector('html').style.setProperty('--theme-color-secondary-', 'black')
-  }
-})
+#themePicker {
+	background-color: grey;
+	text-align: center;
+	padding: 3px;
+}
