@@ -1,5 +1,7 @@
 var html = ["<!DOCTYPE html>", "<html>", "  <head>", "    <title>Monaco Editor</title>", "  </head>", "  <body>", "    ", "  </body>", "</html>"]
 
+var format
+
 // Set up Monaco Editor
 require.config({
   paths: {
@@ -43,7 +45,11 @@ require(["vs/editor/editor.main"], function() {
       }
     }
   }, 'editorTextFocus && !suggestWidgetVisible && !renameInputVisible && !inSnippetMode && !quickFixWidgetVisible')
-
+	
+	format = function() {
+		editor.getAction('editor.action.formatDocument').run()
+	}
+	
   document.getElementById('runButton').addEventListener('click', function() {
     document.querySelector('iframe').srcdoc = editor.getValue()
   })
