@@ -2,14 +2,15 @@
 <html>
 
   <head>
-    <title>CodeFlare Editor</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css"/>
-		<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css' rel="stylesheet" type='text/css' />
-		<link href='style.css' rel='stylesheet' type='text/css' />
+    <title>Editor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css' rel="stylesheet" type='text/css' />
+    <link href='style.css' rel='stylesheet' type='text/css' />
   </head>
+
   <body>
-		<script id='pickr' src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
-		<script src='https://unpkg.com/monaco-editor@0.8.3/min/vs/loader.js'></script>
+    <script id='pickr' src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <script src='https://unpkg.com/monaco-editor@0.8.3/min/vs/loader.js'></script>
     <div id='toolbar'>
       <div id='runButton'>
         <i class="fas fa-play"></i> Run
@@ -18,34 +19,37 @@
         <i class="fas fa-tools"></i> Customize
         <div id='customizeButtonOptions' class='hide'>
           <div id='themePicker'>
-						Theme Picker
-						<button id='color-picker-theme'>
-							
-						</button>
-						<br>
-						<br>
-						<button id='color-picker-theme-secondary'>
-							
-						</button>
+            Theme Picker
+            <button id='color-picker-theme'>
+
+            </button>
+            <br>
+            <br>
+            <button id='color-picker-theme-secondary'>
+
+            </button>
           </div>
         </div>
       </div>
-			<div id='debugButton'>
-				<i class="fas fa-bug"></i> Debugging Options
-				<div id='customizeDebugOptions' class='hide'>
+      <div id='debugButton'>
+        <i class="fas fa-bug"></i> Debugging Options
+        <div id='customizeDebugOptions' class='hide'>
           <div id='sandbox'>
-						<button id='toggleSandbox' onclick='toggleSandbox(); this.innerHTML = "Toggle sandbox. Status: " + getSandbox()'>
-							Toggle sandbox. Status: false
-						</button>
+            <button id='toggleSandbox' onclick='toggleSandbox(); this.innerHTML = "Toggle sandbox. Status: " + getSandbox()'>
+              Toggle sandbox. Status: false
+            </button>
           </div>
         </div>
-			</div>
+      </div>
+      <div id='formatCode' onclick='format()'>
+        <i class="fas fa-indent"></i> Format Code
+      </div>
     </div>
     <div id='content'>
       <div id='container'></div>
       <iframe id='result'>Sorry. This code editor won't work in this browser. Try a different one. See <a href='https://caniuse.com/#feat=mdn-api_htmlframeelement_contentdocument'>https://caniuse.com/#feat=mdn-api_htmlframeelement_contentdocument</a> for more details.</iframe>
     </div>
-		<script src='script.js'></script>
+    <script src='script.js'></script>
   </body>
 
 </html>
